@@ -1,0 +1,39 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid))
+        && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isImageUnder8MB() {
+      return request.resource.size < 8 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    // Fotos postadas por convidados no mural de recados.
+    match /mural/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && isImageUnder8MB();
+    }
+
+    // Fotos do catálogo de presentes — só o admin gerencia.
+    match /gifts/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && isImageUnder8MB();
+    }
+
+    // Fotos da linha do tempo / storyteller.
+    match /story/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && isImageUnder8MB();
+    }
+  }
+}

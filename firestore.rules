@@ -1,0 +1,97 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isLinkedGuest(guestId) {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.guestId == guestId;
+    }
+
+    // Perfis pós-login: guarda o papel (admin/guest) e o vínculo com o convidado.
+    match /users/{uid} {
+      allow get: if isSignedIn() && request.auth.uid == uid;
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && request.auth.uid == uid
+        && request.resource.data.role == 'guest';
+      allow update: if isAdmin()
+        || (
+          isSignedIn() && request.auth.uid == uid
+          && request.resource.data.role == resource.data.role
+          && request.resource.data.guestId == resource.data.guestId
+        );
+      allow delete: if isAdmin();
+    }
+
+    // O ID do documento é o próprio código de convite: só quem conhece o código
+    // consegue ler um registro específico (allow get). Listar todos exige ser admin.
+    match /guests/{guestId} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (
+          // Primeiro acesso: vincula a conta recém-criada a este convite (uma vez só).
+          isSignedIn() && resource.data.authUid == null
+          && request.resource.data.authUid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['authUid'])
+        )
+        || (
+          // Convidado já vinculado só edita a própria confirmação de presença.
+          isSignedIn() && resource.data.authUid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['rsvp'])
+        );
+    }
+
+    match /giftCatalog/{giftId} {
+      allow read: if isSignedIn();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (
+          isSignedIn()
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['status', 'reservedByGuestId', 'reservedByName'])
+          && (
+            (resource.data.status == 'available' && request.resource.data.status == 'reserved'
+              && isLinkedGuest(request.resource.data.reservedByGuestId))
+            || (resource.data.status == 'reserved' && request.resource.data.status == 'available'
+              && isLinkedGuest(resource.data.reservedByGuestId))
+          )
+        );
+    }
+
+    // Mural: qualquer convidado logado lê tudo; só posta em nome do próprio convidado
+    // vinculado; curtidas ficam abertas entre convidados (mural fechado da família,
+    // sem necessidade de controle fino por curtida individual).
+    match /muralPosts/{postId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && request.resource.data.authorGuestId is string
+        && isLinkedGuest(request.resource.data.authorGuestId);
+      allow update: if isAdmin()
+        || (
+          isSignedIn()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes'])
+        );
+      allow delete: if isAdmin()
+        || (isSignedIn() && isLinkedGuest(resource.data.authorGuestId));
+    }
+
+    // Linha do tempo da história do casal: pública para leitura, só admin edita.
+    match /storyEvents/{eventId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
