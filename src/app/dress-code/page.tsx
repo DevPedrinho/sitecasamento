@@ -8,8 +8,8 @@ export default function DressCodePage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-14 sm:px-6">
       <header className="mb-10 text-center">
-        <Shirt className="mx-auto h-8 w-8 text-terracotta" />
-        <p className="mt-3 text-sm uppercase tracking-[0.3em] text-terracotta">Dress code</p>
+        <Shirt className="mx-auto h-8 w-8 text-lilac" />
+        <p className="mt-3 text-sm uppercase tracking-[0.3em] text-lilac">Dress code</p>
         <h1 className="mt-2 font-serif text-4xl text-ink">{dressCode.title}</h1>
         <p className="mx-auto mt-4 max-w-xl text-ink-soft">{dressCode.description}</p>
       </header>

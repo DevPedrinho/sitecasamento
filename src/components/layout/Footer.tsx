@@ -6,7 +6,7 @@ export function Footer() {
     <footer className="border-t border-ink/10 bg-cream-dark/60 py-10">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 text-center text-sm text-ink-soft sm:px-6">
         <p className="flex items-center gap-2 font-serif text-lg text-ink">
-          Deysiane <Heart className="h-4 w-4 text-terracotta" /> Pedro
+          Deysiane <Heart className="h-4 w-4 text-lilac" /> Pedro
         </p>
         <p>
           {WEDDING_DATE.toLocaleDateString("pt-BR", {

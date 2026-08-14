@@ -28,7 +28,7 @@ export default function HistoriaPage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-14 sm:px-6">
       <header className="mb-10 text-center">
-        <p className="text-sm uppercase tracking-[0.3em] text-terracotta">Storyteller</p>
+        <p className="text-sm uppercase tracking-[0.3em] text-lilac">Storyteller</p>
         <h1 className="mt-2 font-serif text-4xl text-ink">Nossa História</h1>
         <p className="mx-auto mt-3 max-w-xl text-ink-soft">
           Um pouquinho da nossa jornada até o grande dia.
@@ -58,8 +58,8 @@ export default function HistoriaPage() {
         <ol className="relative flex flex-col gap-10 border-l border-ink/10 pl-8">
           {events.map((event) => (
             <li key={event.id} className="relative">
-              <span className="absolute -left-[2.35rem] top-1.5 h-3 w-3 rounded-full bg-terracotta" />
-              <p className="text-xs uppercase tracking-wide text-terracotta">
+              <span className="absolute -left-[2.35rem] top-1.5 h-3 w-3 rounded-full bg-lilac" />
+              <p className="text-xs uppercase tracking-wide text-lilac">
                 {formatDatePtBr(event.date)}
               </p>
               <h2 className="mt-1 font-serif text-2xl text-ink">{event.title}</h2>

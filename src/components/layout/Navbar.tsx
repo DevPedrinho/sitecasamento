@@ -39,7 +39,7 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-cream/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
         <Link href="/" className="flex items-center gap-2 font-serif text-lg font-semibold text-ink">
-          <Heart className="h-5 w-5 text-terracotta" />
+          <Heart className="h-5 w-5 text-lilac" />
           Deysiane &amp; Pedro
         </Link>
 
@@ -50,7 +50,7 @@ export function Navbar() {
               href={link.href}
               className={cn(
                 "text-sm font-medium text-ink-soft transition-colors hover:text-ink",
-                pathname === link.href && "text-terracotta"
+                pathname === link.href && "text-lilac"
               )}
             >
               {link.label}
@@ -96,7 +96,7 @@ export function Navbar() {
                 onClick={() => setOpen(false)}
                 className={cn(
                   "rounded-lg px-3 py-2 text-sm font-medium text-ink-soft hover:bg-ink/5",
-                  pathname === link.href && "text-terracotta"
+                  pathname === link.href && "text-lilac"
                 )}
               >
                 {link.label}
@@ -122,7 +122,7 @@ export function Navbar() {
               <Link
                 href="/login"
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-terracotta"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-lilac"
               >
                 Entrar
               </Link>

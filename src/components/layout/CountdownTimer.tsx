@@ -39,19 +39,25 @@ export function CountdownTimer() {
 
   return (
     <div className="grid grid-cols-4 gap-3 sm:gap-5">
-      {units.map((unit) => (
-        <div
-          key={unit.key}
-          className="flex flex-col items-center rounded-2xl border border-ink/10 bg-white/70 px-3 py-4 shadow-sm backdrop-blur-sm sm:px-5 sm:py-6"
-        >
-          <span className="font-serif text-2xl font-semibold text-terracotta sm:text-4xl">
-            {timeLeft ? String(timeLeft[unit.key]).padStart(2, "0") : "--"}
-          </span>
-          <span className="mt-1 text-[11px] uppercase tracking-wide text-ink-soft sm:text-xs">
-            {unit.label}
-          </span>
-        </div>
-      ))}
+      {units.map((unit) => {
+        const value = timeLeft ? String(timeLeft[unit.key]).padStart(2, "0") : "--";
+        return (
+          <div
+            key={unit.key}
+            className="flex flex-col items-center overflow-hidden rounded-2xl border border-ink/10 bg-white/70 px-3 py-4 shadow-sm backdrop-blur-sm sm:px-5 sm:py-6"
+          >
+            <span
+              key={value}
+              className="tick font-serif text-2xl font-semibold tabular-nums text-lilac sm:text-4xl"
+            >
+              {value}
+            </span>
+            <span className="mt-1 text-[11px] uppercase tracking-wide text-ink-soft sm:text-xs">
+              {unit.label}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }

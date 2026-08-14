@@ -80,7 +80,7 @@ function RsvpForm() {
             className={cn(
               "flex items-center justify-center gap-2 rounded-xl border p-4 font-medium transition-colors",
               status === "no"
-                ? "border-terracotta bg-terracotta/10 text-terracotta-dark"
+                ? "border-lilac bg-lilac/10 text-lilac-dark"
                 : "border-ink/10 text-ink-soft hover:border-ink/20"
             )}
           >
@@ -164,7 +164,7 @@ export default function RsvpPage() {
     <GuestRoute>
       <div className="mx-auto w-full max-w-xl px-4 py-14 sm:px-6">
         <header className="mb-8 text-center">
-          <p className="text-sm uppercase tracking-[0.3em] text-terracotta">RSVP</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-lilac">RSVP</p>
           <h1 className="mt-2 font-serif text-4xl text-ink">Confirmação de presença</h1>
         </header>
         <Card className="p-6 sm:p-8">

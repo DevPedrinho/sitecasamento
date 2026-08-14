@@ -72,10 +72,10 @@ export function PostCard({ post, onChange }: { post: MuralPost; onChange: () => 
         disabled={!guest || busy}
         className={cn(
           "flex w-fit items-center gap-1.5 text-sm transition-colors",
-          liked ? "text-terracotta" : "text-ink-soft hover:text-terracotta"
+          liked ? "text-lilac" : "text-ink-soft hover:text-lilac"
         )}
       >
-        <Heart className={cn("h-4 w-4", liked && "fill-terracotta")} />
+        <Heart className={cn("h-4 w-4", liked && "fill-lilac")} />
         {post.likes.length}
       </button>
     </article>

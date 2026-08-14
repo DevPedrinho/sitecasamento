@@ -1,15 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --color-cream: #faf6ef;
-  --color-cream-dark: #f1e9db;
-  --color-ink: #2a2723;
-  --color-ink-soft: #55504a;
-  --color-sage: #7c8b6f;
-  --color-sage-dark: #5c6b4f;
-  --color-terracotta: #c08552;
-  --color-terracotta-dark: #a06a3d;
-  --color-gold: #b08d57;
+  /* Identidade visual oficial Deysiane & Pedro */
+  --color-cream: #f5f1e9; /* marfim */
+  --color-cream-dark: #ece2cd; /* marfim, tom mais profundo */
+  --color-ink: #362f26; /* texto principal, derivado do taupe */
+  --color-ink-soft: #6e6455; /* texto secundário */
+  --color-sage-light: #a8b39f; /* verde claro */
+  --color-sage: #74856f; /* verde sálvia */
+  --color-sage-dark: #566052; /* verde sálvia, sombra */
+  --color-lilac: #8d79a8; /* lilás */
+  --color-lilac-dark: #6c5c85; /* lilás, sombra */
+  --color-lavender: #b5a6c5; /* lavanda */
+  --color-taupe: #806b58; /* taupe / madeira */
+  --color-gold: #a88a62; /* dourado envelhecido */
   --color-white: #ffffff;
 }
 
@@ -18,13 +22,17 @@
   --color-cream-dark: var(--color-cream-dark);
   --color-ink: var(--color-ink);
   --color-ink-soft: var(--color-ink-soft);
+  --color-sage-light: var(--color-sage-light);
   --color-sage: var(--color-sage);
   --color-sage-dark: var(--color-sage-dark);
-  --color-terracotta: var(--color-terracotta);
-  --color-terracotta-dark: var(--color-terracotta-dark);
+  --color-lilac: var(--color-lilac);
+  --color-lilac-dark: var(--color-lilac-dark);
+  --color-lavender: var(--color-lavender);
+  --color-taupe: var(--color-taupe);
   --color-gold: var(--color-gold);
   --font-serif: var(--font-playfair);
   --font-sans: var(--font-inter);
+  --font-script: var(--font-allura);
 }
 
 body {
@@ -41,7 +49,33 @@ h4,
   font-family: var(--font-playfair), Georgia, serif;
 }
 
+.font-script {
+  font-family: var(--font-allura), "Brush Script MT", cursive;
+}
+
 ::selection {
   background: var(--color-sage);
   color: var(--color-white);
+}
+
+@keyframes count-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.tick {
+  display: inline-block;
+  animation: count-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tick {
+    animation: none;
+  }
 }

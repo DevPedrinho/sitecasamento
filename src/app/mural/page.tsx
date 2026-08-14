@@ -22,7 +22,7 @@ function MuralFeed() {
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 py-14 sm:px-6">
       <header className="text-center">
-        <p className="text-sm uppercase tracking-[0.3em] text-terracotta">Mural de recados</p>
+        <p className="text-sm uppercase tracking-[0.3em] text-lilac">Mural de recados</p>
         <h1 className="mt-2 font-serif text-4xl text-ink">Deixe seu recado</h1>
       </header>
 

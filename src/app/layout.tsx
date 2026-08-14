@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Playfair_Display, Inter, Allura } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import { Navbar } from "@/components/layout/Navbar";
@@ -15,6 +15,12 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const allura = Allura({
+  variable: "--font-allura",
+  subsets: ["latin"],
+  weight: "400",
+});
+
 export const metadata: Metadata = {
   title: "Deysiane & Pedro | 22 de maio de 2027",
   description:
@@ -25,7 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
-      className={`${playfair.variable} ${inter.variable} h-full antialiased`}
+      className={`${playfair.variable} ${inter.variable} ${allura.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-cream text-ink">
         <AuthProvider>

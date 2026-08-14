@@ -95,7 +95,7 @@ function LoginTabs() {
   return (
     <div className="mx-auto flex w-full max-w-md flex-col gap-6 px-4 py-16 sm:px-6">
       <header className="text-center">
-        <p className="text-sm uppercase tracking-[0.3em] text-terracotta">Área do convidado</p>
+        <p className="text-sm uppercase tracking-[0.3em] text-lilac">Área do convidado</p>
         <h1 className="mt-2 font-serif text-3xl text-ink">Entrar</h1>
       </header>
 
