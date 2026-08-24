@@ -10,6 +10,7 @@ import {
   updateGift,
   type NewGiftInput,
 } from "@/lib/firestore/gifts";
+import { funGiftsPreset } from "@/lib/fun-gifts-preset";
 import { uploadImage } from "@/lib/upload";
 import { Button } from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Input";
@@ -23,6 +24,7 @@ const emptyForm: NewGiftInput = {
   name: "",
   description: "",
   imageUrl: "",
+  icon: "",
   price: 0,
   type: "produto",
   purchaseLink: "",
@@ -39,7 +41,7 @@ function GiftForm({
   onSaved: () => void;
   onCancel?: () => void;
 }) {
-  const [form, setForm] = useState<NewGiftInput>(initial ?? emptyForm);
+  const [form, setForm] = useState<NewGiftInput>({ ...emptyForm, ...initial });
   const [file, setFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -111,6 +113,13 @@ function GiftForm({
           />
         </label>
       </div>
+      <Input
+        label="Emoji (opcional — usado no card no lugar da foto)"
+        placeholder="ex.: 🎈"
+        value={form.icon}
+        onChange={(e) => set("icon", e.target.value)}
+        hint="Ótimo para cotas divertidas sem foto de produto."
+      />
       {form.type === "produto" && (
         <Input
           label="Link da loja (opcional)"
@@ -142,6 +151,7 @@ function GiftForm({
 export default function AdminPresentesPage() {
   const [gifts, setGifts] = useState<GiftItem[] | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
 
   const reload = useCallback(() => {
     listGifts().then(setGifts);
@@ -157,11 +167,34 @@ export default function AdminPresentesPage() {
     reload();
   }
 
+  async function handleImportPreset() {
+    if (
+      !confirm(
+        `Isso vai adicionar ${funGiftsPreset.length} presentes divertidos (cotas) prontos ao catálogo. Você pode editar ou apagar cada um depois. Continuar?`
+      )
+    )
+      return;
+    setImporting(true);
+    try {
+      for (const item of funGiftsPreset) {
+        await addGift(item);
+      }
+      reload();
+    } finally {
+      setImporting(false);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
-      <header>
-        <h1 className="font-serif text-3xl text-ink">Catálogo de presentes</h1>
-        <p className="mt-1 text-ink-soft">Gerencie os itens que os convidados podem presentear.</p>
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="font-serif text-3xl text-ink">Catálogo de presentes</h1>
+          <p className="mt-1 text-ink-soft">Gerencie os itens que os convidados podem presentear.</p>
+        </div>
+        <Button variant="outline" size="sm" onClick={handleImportPreset} disabled={importing}>
+          {importing ? "Importando..." : "Importar sugestões divertidas"}
+        </Button>
       </header>
 
       <Card className="p-5">
@@ -179,7 +212,10 @@ export default function AdminPresentesPage() {
           ) : (
             <Card key={gift.id} className="flex flex-col gap-2 p-5">
               <div className="flex items-start justify-between gap-2">
-                <h3 className="font-serif text-lg text-ink">{gift.name}</h3>
+                <h3 className="font-serif text-lg text-ink">
+                  {gift.icon && <span className="mr-1.5">{gift.icon}</span>}
+                  {gift.name}
+                </h3>
                 {gift.status === "available" && <Badge tone="success">Disponível</Badge>}
                 {gift.status === "reserved" && <Badge tone="warning">Reservado</Badge>}
                 {gift.status === "given" && <Badge tone="neutral">Presenteado</Badge>}

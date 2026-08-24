@@ -37,6 +37,8 @@ export interface GiftItem {
   name: string;
   description: string;
   imageUrl: string;
+  /** Emoji usado como ilustração do card quando não há foto (ideal para "cotas" divertidas). */
+  icon: string;
   price: number;
   type: GiftType;
   purchaseLink: string;

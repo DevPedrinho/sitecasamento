@@ -45,44 +45,49 @@ export function GiftCard({ gift, onChange }: { gift: GiftItem; onChange: () => v
   }
 
   return (
-    <Card className="flex flex-col overflow-hidden">
-      <div className="aspect-square w-full bg-ink/5">
-        {gift.imageUrl ? (
+    <Card className="flex flex-col overflow-hidden text-center">
+      <div className="relative flex aspect-square w-full items-center justify-center bg-cream-dark/60">
+        {gift.status !== "available" && (
+          <div className="absolute left-3 top-3">
+            {gift.status === "reserved" && (
+              <Badge tone="warning">{reservedByMe ? "Reservado por você" : "Reservado"}</Badge>
+            )}
+            {gift.status === "given" && <Badge tone="neutral">Presenteado</Badge>}
+          </div>
+        )}
+        {gift.icon ? (
+          <span className="text-7xl" aria-hidden>
+            {gift.icon}
+          </span>
+        ) : gift.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={gift.imageUrl} alt={gift.name} className="h-full w-full object-cover" />
         ) : (
-          <div className="flex h-full items-center justify-center text-ink-soft">Sem foto</div>
+          <span className="text-sm text-ink-soft">Sem foto</span>
         )}
       </div>
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="font-serif text-lg text-ink">{gift.name}</h3>
-          {gift.status === "available" && <Badge tone="success">Disponível</Badge>}
-          {gift.status === "reserved" && (
-            <Badge tone="warning">{reservedByMe ? "Reservado por você" : "Reservado"}</Badge>
-          )}
-          {gift.status === "given" && <Badge tone="neutral">Presenteado</Badge>}
-        </div>
+      <div className="flex flex-1 flex-col items-center gap-2 p-5">
+        <h3 className="font-serif text-lg text-ink">{gift.name}</h3>
         {gift.description && <p className="text-sm text-ink-soft">{gift.description}</p>}
         {gift.price > 0 && (
-          <p className="text-sm font-medium text-ink">{formatCurrencyBrl(gift.price)}</p>
+          <p className="text-lg font-semibold text-ink">{formatCurrencyBrl(gift.price)}</p>
         )}
 
-        <div className="mt-auto flex flex-col gap-2 pt-2">
+        <div className="mt-auto flex w-full flex-col items-center gap-2 pt-2">
           {gift.status === "available" && (
-            <Button size="sm" onClick={handleReserve} disabled={busy}>
+            <Button onClick={handleReserve} disabled={busy} className="w-full">
               Presentear
             </Button>
           )}
           {gift.status === "reserved" && reservedByMe && (
-            <Button size="sm" variant="outline" onClick={handleCancel} disabled={busy}>
+            <Button variant="outline" onClick={handleCancel} disabled={busy} className="w-full">
               Cancelar reserva
             </Button>
           )}
 
           {reservedByMe && gift.type === "produto" && gift.purchaseLink && (
-            <a href={gift.purchaseLink} target="_blank" rel="noopener noreferrer">
-              <Button size="sm" variant="secondary" className="w-full">
+            <a href={gift.purchaseLink} target="_blank" rel="noopener noreferrer" className="w-full">
+              <Button variant="secondary" className="w-full">
                 <ExternalLink className="h-4 w-4" />
                 Comprar na loja
               </Button>
@@ -92,7 +97,7 @@ export function GiftCard({ gift, onChange }: { gift: GiftItem; onChange: () => v
           {reservedByMe && gift.type === "cota" && gift.pixKey && (
             <button
               onClick={copyPixKey}
-              className="flex items-center justify-center gap-2 rounded-full border border-ink/15 px-4 py-2 text-sm text-ink hover:bg-ink/5"
+              className="flex w-full items-center justify-center gap-2 rounded-full border border-ink/15 px-4 py-2 text-sm text-ink hover:bg-ink/5"
             >
               {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               {copied ? "Chave copiada!" : "Copiar chave Pix"}
