@@ -27,6 +27,12 @@ const firebaseConfig: FirebaseOptions = {
 
 const useEmulators = process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATORS === "true";
 
+// Verdadeiro assim que houver um projeto Firebase real de verdade por trás (seja
+// um projeto real em produção, seja os emuladores locais rodando em dev). Falso
+// só quando ainda estamos com os valores de placeholder "demo-*" sem emuladores
+// — nesse caso não faz sentido nem tentar falar com o Firestore de verdade.
+export const usingRealBackend = firebaseConfig.projectId !== "demo-sitecasamento" || useEmulators;
+
 export const firebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 export const auth = getAuth(firebaseApp);

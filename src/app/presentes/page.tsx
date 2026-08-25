@@ -5,11 +5,31 @@ import Link from "next/link";
 import { Gift } from "lucide-react";
 import { GiftCard } from "@/components/gifts/GiftCard";
 import { listGifts } from "@/lib/firestore/gifts";
+import { funGiftsPreset } from "@/lib/fun-gifts-preset";
+import { usingRealBackend } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import { FullPageSpinner } from "@/components/ui/Spinner";
 import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import type { GiftItem } from "@/types";
+
+/**
+ * Usado só quando o Firestore ainda não está configurado (ex.: preview na
+ * Vercel antes de um projeto Firebase real existir), pra que a página não
+ * fique vazia/carregando pra sempre. Some sozinho assim que o Firebase real
+ * estiver no ar e a leitura funcionar de verdade.
+ */
+function buildDemoGifts(): GiftItem[] {
+  return funGiftsPreset.map((item, i) => ({
+    ...item,
+    id: `demo-${i}`,
+    status: "available",
+    reservedByGuestId: null,
+    reservedByName: null,
+    createdAt: new Date().toISOString(),
+  }));
+}
 
 type SortOption = "az" | "price-asc" | "price-desc";
 
@@ -30,11 +50,23 @@ function sortGifts(gifts: GiftItem[], sort: SortOption): GiftItem[] {
 export default function PresentesPage() {
   const { guest, firebaseUser } = useAuth();
   const [gifts, setGifts] = useState<GiftItem[] | null>(null);
+  const [isDemo, setIsDemo] = useState(false);
   const [sort, setSort] = useState<SortOption>("az");
   const [showMineOnly, setShowMineOnly] = useState(false);
 
   const reload = useCallback(() => {
-    listGifts().then(setGifts);
+    const fetchGifts = usingRealBackend
+      ? listGifts()
+      : Promise.reject(new Error("Firebase não configurado"));
+    fetchGifts
+      .then((list) => {
+        setIsDemo(false);
+        setGifts(list);
+      })
+      .catch(() => {
+        setIsDemo(true);
+        setGifts(buildDemoGifts());
+      });
   }, []);
 
   useEffect(() => {
@@ -63,7 +95,15 @@ export default function PresentesPage() {
           Escolha uma cota disponível — ela fica reservada em seu nome para que
           ninguém repita o presente.
         </p>
-        {!firebaseUser && (
+        {isDemo && (
+          <div className="mx-auto mt-3 flex w-fit items-center gap-2">
+            <Badge tone="warning">Prévia</Badge>
+            <span className="text-sm text-ink-soft">
+              Itens ilustrativos — reservar ainda não funciona nesta prévia.
+            </span>
+          </div>
+        )}
+        {!isDemo && !firebaseUser && (
           <p className="mx-auto mt-2 max-w-xl text-sm text-ink-soft">
             Você está vendo o catálogo como visitante.{" "}
             <Link href="/login" className="font-medium text-lilac underline">
