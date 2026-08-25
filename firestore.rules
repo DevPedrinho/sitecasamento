@@ -54,8 +54,10 @@ service cloud.firestore {
         );
     }
 
+    // Catálogo público (qualquer pessoa com o link pode visualizar, mesmo sem
+    // login) — só reservar um presente exige estar logado como convidado.
     match /giftCatalog/{giftId} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow create, delete: if isAdmin();
       allow update: if isAdmin()
         || (

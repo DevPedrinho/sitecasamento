@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ExternalLink, Copy, Check } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -74,10 +75,17 @@ export function GiftCard({ gift, onChange }: { gift: GiftItem; onChange: () => v
         )}
 
         <div className="mt-auto flex w-full flex-col items-center gap-2 pt-2">
-          {gift.status === "available" && (
+          {gift.status === "available" && guest && (
             <Button onClick={handleReserve} disabled={busy} className="w-full">
               Presentear
             </Button>
+          )}
+          {gift.status === "available" && !guest && (
+            <Link href="/login" className="w-full">
+              <Button variant="outline" className="w-full">
+                Entrar para presentear
+              </Button>
+            </Link>
           )}
           {gift.status === "reserved" && reservedByMe && (
             <Button variant="outline" onClick={handleCancel} disabled={busy} className="w-full">

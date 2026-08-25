@@ -1,12 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { Gift } from "lucide-react";
-import { GuestRoute } from "@/components/auth/GuestRoute";
 import { GiftCard } from "@/components/gifts/GiftCard";
 import { listGifts } from "@/lib/firestore/gifts";
 import { useAuth } from "@/lib/auth-context";
 import { FullPageSpinner } from "@/components/ui/Spinner";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import type { GiftItem } from "@/types";
 
@@ -26,8 +27,8 @@ function sortGifts(gifts: GiftItem[], sort: SortOption): GiftItem[] {
   return sorted;
 }
 
-function GiftCatalog() {
-  const { guest } = useAuth();
+export default function PresentesPage() {
+  const { guest, firebaseUser } = useAuth();
   const [gifts, setGifts] = useState<GiftItem[] | null>(null);
   const [sort, setSort] = useState<SortOption>("az");
   const [showMineOnly, setShowMineOnly] = useState(false);
@@ -62,6 +63,15 @@ function GiftCatalog() {
           Escolha uma cota disponível — ela fica reservada em seu nome para que
           ninguém repita o presente.
         </p>
+        {!firebaseUser && (
+          <p className="mx-auto mt-2 max-w-xl text-sm text-ink-soft">
+            Você está vendo o catálogo como visitante.{" "}
+            <Link href="/login" className="font-medium text-lilac underline">
+              Entre com o código do seu convite
+            </Link>{" "}
+            para reservar um presente.
+          </p>
+        )}
       </header>
 
       {gifts === null && <FullPageSpinner />}
@@ -74,22 +84,31 @@ function GiftCatalog() {
 
       {gifts !== null && gifts.length > 0 && (
         <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
-          <button
-            type="button"
-            onClick={() => setShowMineOnly((v) => !v)}
-            disabled={myReservedCount === 0}
-            className={cn(
-              "flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60",
-              showMineOnly
-                ? "border-sage bg-sage text-white"
-                : "border-sage/40 bg-sage/10 text-sage-dark hover:bg-sage/20"
-            )}
-          >
-            <Gift className="h-4 w-4" />
-            {myReservedCount === 0
-              ? "Você ainda não reservou nenhum presente"
-              : `Você reservou ${myReservedCount} presente${myReservedCount > 1 ? "s" : ""}`}
-          </button>
+          {guest ? (
+            <button
+              type="button"
+              onClick={() => setShowMineOnly((v) => !v)}
+              disabled={myReservedCount === 0}
+              className={cn(
+                "flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+                showMineOnly
+                  ? "border-sage bg-sage text-white"
+                  : "border-sage/40 bg-sage/10 text-sage-dark hover:bg-sage/20"
+              )}
+            >
+              <Gift className="h-4 w-4" />
+              {myReservedCount === 0
+                ? "Você ainda não reservou nenhum presente"
+                : `Você reservou ${myReservedCount} presente${myReservedCount > 1 ? "s" : ""}`}
+            </button>
+          ) : (
+            <Link href="/login">
+              <Button variant="outline" size="sm">
+                <Gift className="h-4 w-4" />
+                Entrar para presentear
+              </Button>
+            </Link>
+          )}
 
           <label className="flex items-center gap-2 text-sm text-ink-soft">
             Ordenar lista por:
@@ -118,13 +137,5 @@ function GiftCatalog() {
         ))}
       </div>
     </div>
-  );
-}
-
-export default function PresentesPage() {
-  return (
-    <GuestRoute>
-      <GiftCatalog />
-    </GuestRoute>
   );
 }
